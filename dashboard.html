@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="application-name" content="VNF family-shop-v1">
+  <title>Dashboard</title>
+
+  <style>
+    /* --- VNF FINAL POLISH PACK v1 --- */
+
+    body, button, a { transition: all 0.25s ease; }
+
+    body.light { background:#f8fafc; color:#1e293b; }
+    body.dark { background:#0f172a; color:#e2e8f0; }
+
+    .vnf-header {
+      text-align:center;
+      font-size:24px;
+      font-weight:800;
+      margin-top:25px;
+      margin-bottom:25px;
+      opacity:0.9;
+      letter-spacing:0.5px;
+    }
+
+    .menu a {
+      display:block;
+      margin:8px 0;
+      padding:10px;
+      background:#38bdf8;
+      color:white;
+      text-decoration:none;
+      border-radius:10px;
+      text-align:center;
+      font-weight:600;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .menu a:hover {
+      transform:scale(1.03);
+      box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    button {
+      padding:10px 16px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      margin:10px;
+      font-weight:600;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    button:hover {
+      transform:scale(1.03);
+      box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .bottom-buttons {
+      text-align:center;
+      margin-top:20px;
+    }
+
+    /* COUNTERS */
+    #vnfCounters div {
+      padding:15px;
+      border-radius:12px;
+      margin:10px auto;
+      width:220px;
+      font-size:18px;
+      font-weight:700;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    #countStoresBox { background:#38bdf8; color:white; }
+    #countProductsBox { background:#475569; color:white; }
+    #countOrdersBox { background:#ef4444; color:white; }
+
+    footer {
+      margin-top:30px;
+      font-size:12px;
+      color:#777;
+      text-align:center;
+      line-height:1.4;
+    }
+
+    @media (max-width: 480px) {
+      .vnf-header { font-size:20px; }
+      button { padding:10px 14px; }
+      #vnfCounters div { width:180px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="vnf-header">VNF Family Shop v1</div>
+
+<h1 style="text-align:center;">Dashboard</h1>
+<h2 id="langMsg" style="text-align:center;"></h2>
+
+<!-- FANENE FAMILY INFO -->
+<div id="familyInfoBox" style="text-align:center; margin-top:15px; padding:12px; background:#e2e8f0; border-radius:10px; width:260px; margin-left:auto; margin-right:auto;">
+  <p><strong>Family Code:</strong> <span id="familyCode"></span></p>
+  <p><strong>Family ID:</strong> <span id="familyId"></span></p>
+  <p><strong>Device ID:</strong> <span id="deviceId"></span></p>
+</div>
+
+
+<!-- LIVE COUNTERS -->
+<div id="vnfCounters" style="text-align:center; margin-top:20px;">
+  <div id="countStoresBox">
+    Stores: <span id="countStores">0</span>
+  </div>
+
+  <div id="countProductsBox">
+    Products: <span id="countProducts">0</span>
+  </div>
+
+  <div id="countOrdersBox">
+    Orders: <span id="countOrders">0</span>
+  </div>
+</div>
+
+<div class="menu">
+  <a href="admin.html">Admin</a>
+  <a href="stores.html">Stores</a>
+  <a href="products.html">Products</a>
+  <a href="orders.html">Orders</a>
+  <a href="settings.html">Settings</a>
+  <a href="users.html">Users</a>
+</div>
+
+<div class="bottom-buttons">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+  <button onclick="logout()" style="background:#ef4444; color:white;">Logout</button>
+  <button onclick="window.location.href='login.html'" style="background:#38bdf8; color:white;">Back to Login</button>
+</div>
+
+<script>
+  // Protection
+  if (localStorage.getItem("vnf_auth") !== "ok") {
+    window.location.href = "login.html";
+  }
+
+  // Light / Dark Mode
+  function toggleMode() {
+    const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
+    localStorage.setItem("vnf_mode", mode);
+    document.body.className = mode;
+  }
+  document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let welcome = "Welcome";
+  if (lang.startsWith("el")) welcome = "Καλώς ήρθες";
+  if (lang.startsWith("fr")) welcome = "Bienvenue";
+
+  window.onload = () => {
+    document.getElementById("langMsg").innerText = welcome;
+    updateCounters();
+    // Show Fanene Family Info
+  document.getElementById("familyCode").innerText = localStorage.getItem("family_code") || "N/A";
+  document.getElementById("familyId").innerText = localStorage.getItem("family_id") || "N/A";
+  document.getElementById("deviceId").innerText = localStorage.getItem("device_id") || "N/A";
+
+  };
+
+  // Logout
+  function logout() {
+    localStorage.removeItem("vnf_auth");
+    window.location.href = "login.html";
+  }
+
+  // Dashboard Counters
+  function updateCounters() {
+    const stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
+    const products = JSON.parse(localStorage.getItem("vnf_products") || "[]");
+    const orders = JSON.parse(localStorage.getItem("vnf_orders") || "[]");
+
+    document.getElementById("countStores").innerText = stores.length;
+    document.getElementById("countProducts").innerText = products.length;
+    document.getElementById("countOrders").innerText = orders.length;
+  }
+</script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
+
+</body>
+</html>

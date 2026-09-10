@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="application-name" content="VNF family-shop-v1">
+  <title>Login</title>
+
+  <style>
+    body, button, a { transition: all 0.25s ease; }
+
+    body.light { background:#f5f5f5; color:#222; }
+    body.dark { background:#0f172a; color:white; }
+
+    .vnf-header {
+      text-align:center;
+      font-size:22px;
+      font-weight:700;
+      margin-top:20px;
+      margin-bottom:20px;
+      opacity:0.85;
+    }
+
+    .content { text-align:center; margin-top:20px; }
+
+    input {
+      padding:10px;
+      width:200px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      margin-top:10px;
+    }
+
+    button {
+      padding:10px 16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      margin:10px;
+    }
+
+    .bottom-buttons { text-align:center; margin-top:20px; }
+
+    footer {
+      margin-top:30px;
+      font-size:12px;
+      color:#777;
+      text-align:center;
+      line-height:1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="vnf-header">VNF Family Shop v1</div>
+
+<div class="content">
+  <h1 id="titleMsg">Enter Password</h1>
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()" style="background:#38bdf8; color:white;">Login</button>
+</div>
+
+<div class="bottom-buttons">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+</div>
+
+<script>
+  // Light / Dark Mode
+  function toggleMode() {
+    const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
+    localStorage.setItem("vnf_mode", mode);
+    document.body.className = mode;
+  }
+  document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let title = "Enter Password";
+  if (lang.startsWith("el")) title = "Εισαγωγή Κωδικού";
+  if (lang.startsWith("fr")) title = "Entrez le mot de passe";
+
+  window.onload = () => {
+    document.getElementById("titleMsg").innerText = title;
+  };
+
+  // ⭐ FANENE FAMILY SYSTEM DEMO CONFIG
+  const DEMO_FAMILY_CODE = "FNF-TEST-001";
+  const DEMO_FAMILY_ID   = "fam-001";
+  const DEMO_DEVICE_ID   = "dev-001";
+
+  // ⭐ AUTO-DEMO DATA (stores/products/orders)
+  function vnfInitDemoData() {
+    if (!localStorage.getItem("vnf_stores")) {
+      localStorage.setItem("vnf_stores", JSON.stringify([
+        { name: "Maxi", addedBy: "admin" },
+        { name: "Super C", addedBy: "family" },
+        { name: "Walmart", addedBy: "admin" }
+      ]));
+    }
+
+    if (!localStorage.getItem("vnf_products")) {
+      localStorage.setItem("vnf_products", JSON.stringify([
+        { name: "Milk 2L", qty: 2, store: "Maxi", addedBy: "family" },
+        { name: "Bread", qty: 1, store: "Super C", addedBy: "admin" },
+        { name: "Eggs 12", qty: 1, store: "Walmart", addedBy: "family" }
+      ]));
+    }
+
+    if (!localStorage.getItem("vnf_orders")) {
+      localStorage.setItem("vnf_orders", JSON.stringify([
+        { store: "Maxi", product: "Milk 2L", qty: 2, status: "Pending", addedBy: "admin" },
+        { store: "Super C", product: "Bread", qty: 1, status: "Completed", addedBy: "family" }
+      ]));
+    }
+  }
+
+  // ⭐ LOGIN WITH ROLES + FAMILY / DEVICE
+  function login() {
+    const p = document.getElementById("pass").value.trim();
+
+    let role = null;
+
+    if (p === "vnf1969") role = "admin";
+    else if (p === "family123") role = "family";
+    else if (p === "staff123") role = "staff";
+    else return alert("Wrong password");
+
+    // AUTH + ROLE
+    localStorage.setItem("vnf_auth", "ok");
+    localStorage.setItem("vnf_user", role);
+
+    // FANENE FAMILY INFO
+    localStorage.setItem("family_code", DEMO_FAMILY_CODE);
+    localStorage.setItem("family_id", DEMO_FAMILY_ID);
+    localStorage.setItem("device_id", DEMO_DEVICE_ID);
+
+    // INIT DEMO DATA
+    vnfInitDemoData();
+
+    // REDIRECT
+    window.location.href = "dashboard.html";
+  }
+</script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
+
+</body>
+</html>

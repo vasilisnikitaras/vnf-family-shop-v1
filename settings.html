@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="application-name" content="VNF family-shop-v1">
+  <title>Settings</title>
+
+  <style>
+    /* --- VNF FINAL POLISH PACK v1 --- */
+
+/* Smooth transitions */
+body, button, a {
+  transition: all 0.25s ease;
+}
+
+/* Premium header */
+.vnf-header {
+  text-align:center;
+  font-size:24px;
+  font-weight:800;
+  margin-top:25px;
+  margin-bottom:25px;
+  opacity:0.9;
+  letter-spacing:0.5px;
+}
+
+/* Buttons premium */
+button, .menu a {
+  border-radius:10px !important;
+  font-weight:600;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+
+button:hover, .menu a:hover {
+  transform:scale(1.03);
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* Light mode polish */
+body.light {
+  background:#f8fafc;
+  color:#1e293b;
+}
+
+/* Dark mode polish */
+body.dark {
+  background:#0f172a;
+  color:#e2e8f0;
+}
+
+body.dark button,
+body.dark .menu a {
+  background:#1e293b !important;
+  color:#e2e8f0 !important;
+}
+
+/* Centered content polish */
+.content, .menu, .bottom-buttons {
+  text-align:center;
+}
+
+/* Mobile polish */
+@media (max-width: 480px) {
+  .vnf-header { font-size:20px; }
+  button, .menu a { padding:10px 14px; }
+}
+
+    body.light { background:#f5f5f5; color:#222; }
+    body.dark { background:#0f172a; color:white; }
+
+    .vnf-header {
+      text-align:center;
+      font-size:22px;
+      font-weight:700;
+      margin-top:20px;
+      margin-bottom:20px;
+      opacity:0.85;
+    }
+
+    .content {
+      text-align:center;
+      margin-top:20px;
+    }
+
+    button {
+      padding:10px 16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      margin:10px;
+    }
+
+    .bottom-buttons {
+      text-align:center;
+      margin-top:20px;
+    }
+
+    .bottom-buttons button {
+      display:inline-block;
+      margin:5px;
+    }
+
+    footer {
+      margin-top:30px;
+      font-size:12px;
+      color:#777;
+      text-align:center;
+      line-height:1.4;
+    }
+
+    @media (max-width: 480px) {
+      .vnf-header { font-size:18px; }
+      button { padding:8px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="vnf-header">VNF Family Shop v1</div>
+
+<div class="content">
+  <h1>Settings</h1>
+  <h2 id="langMsg"></h2>
+  <p>Settings page demo.</p>
+</div>
+
+<div class="bottom-buttons">
+  <button onclick="toggleMode()">Light / Dark Mode</button>
+  <button onclick="logout()" style="background:#ef4444; color:white;">Logout</button>
+  <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
+  <button onclick="window.location.href='login.html'" style="background:#475569; color:white;">Back to Login</button>
+</div>
+
+<script>
+  // Protection
+  if (localStorage.getItem("vnf_auth") !== "ok") {
+    window.location.href = "login.html";
+  }
+
+  // Light / Dark Mode
+  function toggleMode() {
+    const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
+    localStorage.setItem("vnf_mode", mode);
+    document.body.className = mode;
+  }
+
+  document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let msg = "Welcome";
+
+  if (lang.startsWith("el")) msg = "Καλώς ήρθες";
+  if (lang.startsWith("fr")) msg = "Bienvenue";
+
+  window.onload = () => {
+    document.getElementById("langMsg").innerText = msg;
+  };
+
+  // Logout
+  function logout() {
+    localStorage.removeItem("vnf_auth");
+    window.location.href = "login.html";
+  }
+</script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
+
+</body>
+</html>
