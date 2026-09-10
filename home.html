@@ -2,103 +2,78 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Home</title>
 
   <style>
-    /* --- VNF FINAL POLISH PACK v1 --- */
+    /* Smooth transitions */
+    body, button, a {
+      transition: all 0.25s ease;
+    }
 
-/* Smooth transitions */
-body, button, a {
-  transition: all 0.25s ease;
-}
+    /* Light / Dark Mode */
+    body.light { background:#f8fafc; color:#1e293b; }
+    body.dark  { background:#0f172a; color:#e2e8f0; }
 
-/* Premium header */
-.vnf-header {
-  text-align:center;
-  font-size:24px;
-  font-weight:800;
-  margin-top:25px;
-  margin-bottom:25px;
-  opacity:0.9;
-  letter-spacing:0.5px;
-}
-
-/* Buttons premium */
-button, .menu a {
-  border-radius:10px !important;
-  font-weight:600;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-}
-
-button:hover, .menu a:hover {
-  transform:scale(1.03);
-  box-shadow:0 4px 10px rgba(0,0,0,0.25);
-}
-
-/* Light mode polish */
-body.light {
-  background:#f8fafc;
-  color:#1e293b;
-}
-
-/* Dark mode polish */
-body.dark {
-  background:#0f172a;
-  color:#e2e8f0;
-}
-
-body.dark button,
-body.dark .menu a {
-  background:#1e293b !important;
-  color:#e2e8f0 !important;
-}
-
-/* Centered content polish */
-.content, .menu, .bottom-buttons {
-  text-align:center;
-}
-
-/* Mobile polish */
-@media (max-width: 480px) {
-  .vnf-header { font-size:20px; }
-  button, .menu a { padding:10px 14px; }
-}
-
-    body.light { background:#f5f5f5; color:#222; }
-    body.dark { background:#0f172a; color:white; }
-
+    /* Premium header */
     .vnf-header {
       text-align:center;
-      font-size:22px;
-      font-weight:700;
-      margin-top:20px;
-      margin-bottom:20px;
-      opacity:0.85;
+      font-size:26px;
+      font-weight:800;
+      margin-top:25px;
+      margin-bottom:25px;
+      opacity:0.9;
+      letter-spacing:0.5px;
     }
 
-    .content {
+    /* Main container (PREMIUM MOBILE FIX) */
+    .vnf-container {
+      max-width:480px;
+      margin:0 auto;
+      padding:12px;
       text-align:center;
-      margin-top:20px;
     }
 
+    /* Buttons */
     button {
-      padding:10px 16px;
+      padding:12px 18px;
       border:none;
-      border-radius:6px;
+      border-radius:10px;
+      font-weight:600;
       cursor:pointer;
-      margin:10px;
+      margin:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
-    .bottom-buttons {
-      text-align:center;
+    button:hover {
+      transform:scale(1.03);
+      box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    /* Welcome box */
+    .welcome-box {
+      background:#ffffff;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
       margin-top:20px;
+      text-align:center;
     }
 
-    .bottom-buttons button {
-      display:inline-block;
-      margin:5px;
+    body.dark .welcome-box {
+      background:#1e293b;
+      color:#e2e8f0;
+    }
+
+    /* Mobile polish */
+    @media (max-width: 480px) {
+      .vnf-header { font-size:22px; }
+      button { padding:10px 14px; }
+      body { font-size:14px; }
     }
 
     footer {
@@ -108,27 +83,32 @@ body.dark .menu a {
       text-align:center;
       line-height:1.4;
     }
-
-    @media (max-width: 480px) {
-      .vnf-header { font-size:18px; }
-      button { padding:8px 14px; }
-    }
   </style>
 </head>
-<body>
 
-<div class="vnf-header">VNF Family Shop v1</div>
+<body class="light">
 
-<div class="content">
-  <h1 id="welcomeMsg">Welcome</h1>
-  <p id="descMsg">A simple protected demo system with dashboard and pages.</p>
+<div class="vnf-container">
 
-  <button onclick="window.location.href='login.html'" style="background:#38bdf8; color:white;">Login</button>
-  <button onclick="window.location.href='dashboard.html'" style="background:#475569; color:white;">Dashboard</button>
-</div>
+  <div class="vnf-header">VNF Family Shop v1</div>
 
-<div class="bottom-buttons">
-  <button onclick="toggleMode()">Light / Dark Mode</button>
+  <div class="welcome-box">
+    <h2>Welcome</h2>
+    <p>Your family shop management system.</p>
+
+    <button style="background:#38bdf8; color:white;" onclick="goLogin()">Login</button>
+
+    <button onclick="toggleMode()">Light / Dark Mode</button>
+
+    <button style="background:#475569; color:white;" onclick="goDashboard()">Dashboard</button>
+  </div>
+
+  <footer>
+    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+    Unauthorized copying or resale is strictly prohibited.<br>
+    Contact: vasilis.nikitaras@gmail.com
+  </footer>
+
 </div>
 
 <script>
@@ -141,33 +121,19 @@ body.dark .menu a {
 
   document.body.className = localStorage.getItem("vnf_mode") || "light";
 
-  // Language Detection
-  const lang = navigator.language || navigator.userLanguage;
-
-  let welcome = "Welcome";
-  let desc = "A simple protected demo system with dashboard and pages.";
-
-  if (lang.startsWith("el")) {
-    welcome = "Καλώς ήρθες";
-    desc = "Ένα απλό προστατευμένο demo σύστημα με dashboard και σελίδες.";
+  // Navigation
+  function goLogin() {
+    window.location.href = "login.html";
   }
 
-  if (lang.startsWith("fr")) {
-    welcome = "Bienvenue";
-    desc = "Un système démo protégé simple avec tableau de bord et pages.";
+  function goDashboard() {
+    if (localStorage.getItem("vnf_auth") === "ok") {
+      window.location.href = "dashboard.html";
+    } else {
+      alert("Please login first.");
+    }
   }
-
-  window.onload = () => {
-    document.getElementById("welcomeMsg").innerText = welcome;
-    document.getElementById("descMsg").innerText = desc;
-  };
 </script>
-
-<footer>
-  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-  Unauthorized copying or resale is strictly prohibited.<br>
-  Contact: vasilis.nikitaras@gmail.com
-</footer>
 
 </body>
 </html>
