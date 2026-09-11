@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
-  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <!-- Mobile Perfect Scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- PWA Requirements -->
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
 
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Home</title>
 
   <style>
-    /* Smooth transitions */
+    /* --- VNF FINAL POLISH PACK v1 --- */
+
     body, button, a {
       transition: all 0.25s ease;
     }
@@ -22,7 +27,7 @@
     /* Premium header */
     .vnf-header {
       text-align:center;
-      font-size:26px;
+      font-size:24px;
       font-weight:800;
       margin-top:25px;
       margin-bottom:25px;
@@ -54,24 +59,9 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* Welcome box */
-    .welcome-box {
-      background:#ffffff;
-      padding:20px;
-      border-radius:12px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.15);
-      margin-top:20px;
-      text-align:center;
-    }
-
-    body.dark .welcome-box {
-      background:#1e293b;
-      color:#e2e8f0;
-    }
-
     /* Mobile polish */
     @media (max-width: 480px) {
-      .vnf-header { font-size:22px; }
+      .vnf-header { font-size:20px; }
       button { padding:10px 14px; }
       body { font-size:14px; }
     }
@@ -92,15 +82,16 @@
 
   <div class="vnf-header">VNF Family Shop v1</div>
 
-  <div class="welcome-box">
-    <h2>Welcome</h2>
-    <p>Your family shop management system.</p>
+  <div class="content">
+    <h1 id="welcomeMsg">Welcome</h1>
+    <p id="descMsg">A simple protected demo system with dashboard and pages.</p>
 
-    <button style="background:#38bdf8; color:white;" onclick="goLogin()">Login</button>
+    <button onclick="window.location.href='login.html'" style="background:#38bdf8; color:white;">Login</button>
+    <button onclick="window.location.href='dashboard.html'" style="background:#475569; color:white;">Dashboard</button>
+  </div>
 
+  <div class="bottom-buttons">
     <button onclick="toggleMode()">Light / Dark Mode</button>
-
-    <button style="background:#475569; color:white;" onclick="goDashboard()">Dashboard</button>
   </div>
 
   <footer>
@@ -121,17 +112,30 @@
 
   document.body.className = localStorage.getItem("vnf_mode") || "light";
 
-  // Navigation
-  function goLogin() {
-    window.location.href = "login.html";
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+
+  let welcome = "Welcome";
+  let desc = "A simple protected demo system with dashboard and pages.";
+
+  if (lang.startsWith("el")) {
+    welcome = "Καλώς ήρθες";
+    desc = "Ένα απλό προστατευμένο demo σύστημα με dashboard και σελίδες.";
   }
 
-  function goDashboard() {
-    if (localStorage.getItem("vnf_auth") === "ok") {
-      window.location.href = "dashboard.html";
-    } else {
-      alert("Please login first.");
-    }
+  if (lang.startsWith("fr")) {
+    welcome = "Bienvenue";
+    desc = "Un système démo protégé simple avec tableau de bord et pages.";
+  }
+
+  window.onload = () => {
+    document.getElementById("welcomeMsg").innerText = welcome;
+    document.getElementById("descMsg").innerText = desc;
+  };
+
+  // PWA Service Worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
   }
 </script>
 

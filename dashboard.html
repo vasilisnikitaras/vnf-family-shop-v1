@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
-  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <!-- Mobile Perfect Scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- PWA Requirements -->
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
 
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Dashboard</title>
 
   <style>
-    /* Smooth transitions */
-    body, button, a {
-      transition: all 0.25s ease;
-    }
+    /* --- VNF FINAL POLISH PACK v1 --- */
 
-    /* Light / Dark Mode */
+    body, button, a { transition: all 0.25s ease; }
+
     body.light { background:#f8fafc; color:#1e293b; }
     body.dark  { background:#0f172a; color:#e2e8f0; }
 
-    /* Premium header */
     .vnf-header {
       text-align:center;
-      font-size:26px;
+      font-size:24px;
       font-weight:800;
       margin-top:25px;
       margin-bottom:25px;
@@ -30,53 +31,31 @@
       letter-spacing:0.5px;
     }
 
-    /* Main container (PREMIUM MOBILE FIX) */
-    .vnf-container {
-      max-width:480px;
-      margin:0 auto;
+    .menu a {
+      display:block;
+      margin:8px 0;
       padding:12px;
+      background:#38bdf8;
+      color:white;
+      text-decoration:none;
+      border-radius:10px;
       text-align:center;
-    }
-
-    /* Info box */
-    .info-box {
-      background:#ffffff;
-      padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      text-align:left;
-    }
-
-    body.dark .info-box {
-      background:#1e293b;
-      color:#e2e8f0;
-    }
-
-    /* Counter boxes */
-    .counter-box {
-      background:#ffffff;
-      padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      font-size:18px;
       font-weight:600;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
-    body.dark .counter-box {
-      background:#1e293b;
-      color:#e2e8f0;
+    .menu a:hover {
+      transform:scale(1.03);
+      box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* Buttons */
     button {
       padding:12px 18px;
       border:none;
       border-radius:10px;
-      font-weight:600;
       cursor:pointer;
-      margin:8px;
+      margin:10px;
+      font-weight:600;
       box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
@@ -85,12 +64,25 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* Mobile polish */
-    @media (max-width: 480px) {
-      .vnf-header { font-size:22px; }
-      button { padding:10px 14px; }
-      body { font-size:14px; }
+    .bottom-buttons {
+      text-align:center;
+      margin-top:20px;
     }
+
+    /* COUNTERS */
+    #vnfCounters div {
+      padding:15px;
+      border-radius:12px;
+      margin:10px auto;
+      width:240px;
+      font-size:18px;
+      font-weight:700;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    #countStoresBox { background:#38bdf8; color:white; }
+    #countProductsBox { background:#475569; color:white; }
+    #countOrdersBox { background:#ef4444; color:white; }
 
     footer {
       margin-top:30px;
@@ -99,44 +91,57 @@
       text-align:center;
       line-height:1.4;
     }
+
+    @media (max-width: 480px) {
+      .vnf-header { font-size:20px; }
+      button { padding:10px 14px; }
+      #vnfCounters div { width:180px; }
+    }
   </style>
 </head>
 
 <body class="light">
 
-<div class="vnf-container">
+<div class="vnf-header">VNF Family Shop v1</div>
 
-  <div class="vnf-header">Dashboard</div>
+<h1 style="text-align:center;">Dashboard</h1>
+<h2 id="langMsg" style="text-align:center;"></h2>
 
-  <!-- Info Section -->
-  <div class="info-box">
-    <strong>Family Code:</strong> FNF-TEST-001<br>
-    <strong>Family ID:</strong> fam-001<br>
-    <strong>Device ID:</strong> dev-001
+<!-- FANENE FAMILY INFO -->
+<div id="familyInfoBox" style="text-align:center; margin-top:15px; padding:12px; background:#e2e8f0; border-radius:10px; width:260px; margin-left:auto; margin-right:auto;">
+  <p><strong>Family Code:</strong> <span id="familyCode"></span></p>
+  <p><strong>Family ID:</strong> <span id="familyId"></span></p>
+  <p><strong>Device ID:</strong> <span id="deviceId"></span></p>
+</div>
+
+<!-- LIVE COUNTERS -->
+<div id="vnfCounters" style="text-align:center; margin-top:20px;">
+  <div id="countStoresBox">
+    Stores: <span id="countStores">0</span>
   </div>
 
-  <!-- Counters -->
-  <div class="counter-box">Stores: <span id="storesCount">3</span></div>
-  <div class="counter-box">Products: <span id="productsCount">3</span></div>
-  <div class="counter-box">Orders: <span id="ordersCount">2</span></div>
-
-  <!-- Navigation -->
-  <div class="bottom-buttons">
-    <button onclick="window.location.href='stores.html'" style="background:#38bdf8; color:white;">Stores</button>
-    <button onclick="window.location.href='products.html'" style="background:#38bdf8; color:white;">Products</button>
-    <button onclick="window.location.href='orders.html'" style="background:#38bdf8; color:white;">Orders</button>
-    <button onclick="window.location.href='settings.html'" style="background:#475569; color:white;">Settings</button>
-    <button onclick="window.location.href='users.html'" style="background:#475569; color:white;">Users</button>
-    <button onclick="toggleMode()">Light / Dark Mode</button>
-    <button onclick="logout()" style="background:#ef4444; color:white;">Logout</button>
+  <div id="countProductsBox">
+    Products: <span id="countProducts">0</span>
   </div>
 
-  <footer>
-    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-    Unauthorized copying or resale is strictly prohibited.<br>
-    Contact: vasilis.nikitaras@gmail.com
-  </footer>
+  <div id="countOrdersBox">
+    Orders: <span id="countOrders">0</span>
+  </div>
+</div>
 
+<div class="menu">
+  <a href="admin.html">Admin</a>
+  <a href="stores.html">Stores</a>
+  <a href="products.html">Products</a>
+  <a href="orders.html">Orders</a>
+  <a href="settings.html">Settings</a>
+  <a href="users.html">Users</a>
+</div>
+
+<div class="bottom-buttons">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+  <button onclick="logout()" style="background:#ef4444; color:white;">Logout</button>
+  <button onclick="window.location.href='login.html'" style="background:#38bdf8; color:white;">Back to Login</button>
 </div>
 
 <script>
@@ -151,15 +156,51 @@
     localStorage.setItem("vnf_mode", mode);
     document.body.className = mode;
   }
-
   document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let welcome = "Welcome";
+  if (lang.startsWith("el")) welcome = "Καλώς ήρθες";
+  if (lang.startsWith("fr")) welcome = "Bienvenue";
+
+  window.onload = () => {
+    document.getElementById("langMsg").innerText = welcome;
+    updateCounters();
+
+    document.getElementById("familyCode").innerText = localStorage.getItem("family_code") || "N/A";
+    document.getElementById("familyId").innerText = localStorage.getItem("family_id") || "N/A";
+    document.getElementById("deviceId").innerText = localStorage.getItem("device_id") || "N/A";
+  };
 
   // Logout
   function logout() {
     localStorage.removeItem("vnf_auth");
     window.location.href = "login.html";
   }
+
+  // Dashboard Counters
+  function updateCounters() {
+    const stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
+    const products = JSON.parse(localStorage.getItem("vnf_products") || "[]");
+    const orders = JSON.parse(localStorage.getItem("vnf_orders") || "[]");
+
+    document.getElementById("countStores").innerText = stores.length;
+    document.getElementById("countProducts").innerText = products.length;
+    document.getElementById("countOrders").innerText = orders.length;
+  }
+
+  // PWA Service Worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
 </script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
 
 </body>
 </html>

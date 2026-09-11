@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
-  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <!-- Mobile Perfect Scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- PWA Requirements -->
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
 
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Products</title>
 
   <style>
-    /* Smooth transitions */
-    body, button, a {
-      transition: all 0.25s ease;
-    }
+    body, button, a { transition: all 0.25s ease; }
 
-    /* Light / Dark Mode */
     body.light { background:#f8fafc; color:#1e293b; }
-    body.dark  { background:#0f172a; color:#e2e8f0; }
+    body.dark { background:#0f172a; color:#e2e8f0; }
 
-    /* Premium header */
     .vnf-header {
       text-align:center;
       font-size:24px;
@@ -27,25 +26,26 @@
       margin-top:25px;
       margin-bottom:25px;
       opacity:0.9;
-      letter-spacing:0.5px;
     }
 
-    /* Main container (PREMIUM MOBILE FIX) */
-    .vnf-container {
-      max-width:480px;
-      margin:0 auto;
+    .content { text-align:center; margin-top:20px; }
+
+    input, select {
       padding:12px;
-      text-align:center;
+      width:260px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-top:10px;
+      font-size:16px;
     }
 
-    /* Buttons */
     button {
       padding:12px 18px;
       border:none;
-      border-radius:10px;
-      font-weight:600;
+      border-radius:10px !important;
       cursor:pointer;
-      margin:8px;
+      margin:10px;
+      font-weight:600;
       box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
@@ -54,26 +54,19 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* Product list */
-    .product-box {
+    .product-item {
       background:#ffffff;
       padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      text-align:left;
+      margin:10px auto;
+      width:300px;
+      border-radius:12px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      text-align:center;
     }
 
-    body.dark .product-box {
+    body.dark .product-item {
       background:#1e293b;
       color:#e2e8f0;
-    }
-
-    /* Mobile polish */
-    @media (max-width: 480px) {
-      .vnf-header { font-size:20px; }
-      button { padding:10px 14px; }
-      body { font-size:14px; }
     }
 
     footer {
@@ -83,65 +76,293 @@
       text-align:center;
       line-height:1.4;
     }
+
+    /* Modal */
+    .vnf-modal {
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.55);
+      backdrop-filter:blur(3px);
+      justify-content:center;
+      align-items:center;
+      z-index:9999;
+    }
+
+    .vnf-modal-content {
+      background:white;
+      padding:25px;
+      border-radius:12px;
+      width:300px;
+      text-align:center;
+      box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    body.dark .vnf-modal-content {
+      background:#1e293b;
+      color:#e2e8f0;
+    }
+
+    /* Toast */
+    #vnfToastContainer {
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:99999;
+    }
+
+    .vnf-toast {
+      background:#1e293b;
+      color:white;
+      padding:12px 18px;
+      margin-top:10px;
+      border-radius:10px;
+      font-weight:600;
+      opacity:0;
+      transform:translateX(30px);
+      animation:vnfToastIn 0.4s forwards;
+    }
+
+    @keyframes vnfToastIn {
+      to { opacity:1; transform:translateX(0); }
+    }
+
+    .vnf-toast-hide {
+      animation:vnfToastOut 0.4s forwards;
+    }
+
+    @keyframes vnfToastOut {
+      to { opacity:0; transform:translateX(30px); }
+    }
+
+    @media (max-width:480px) {
+      .vnf-header { font-size:20px; }
+      input, select { width:240px; }
+      .product-item { width:260px; }
+      button { padding:10px 14px; }
+    }
   </style>
 </head>
 
 <body class="light">
 
-<div class="vnf-container">
+<div class="vnf-header">VNF Family Shop v1</div>
 
-  <div class="vnf-header">Products</div>
+<div class="content">
+  <h1 id="titleMsg">Products</h1>
 
-  <div id="productList">
-    <!-- Example products -->
-    <div class="product-box">
-      <strong>Product 1</strong><br>
-      Price: $10<br>
-      Stock: 5
-    </div>
+  <input id="prodName" type="text" placeholder="Product name">
+  <input id="prodQty" type="number" min="1" placeholder="Quantity">
 
-    <div class="product-box">
-      <strong>Product 2</strong><br>
-      Price: $20<br>
-      Stock: 2
-    </div>
+  <select id="prodStore">
+    <option value="">Select Store</option>
+  </select>
 
-    <div class="product-box">
-      <strong>Product 3</strong><br>
-      Price: $15<br>
-      Stock: 10
-    </div>
-  </div>
+  <button onclick="addProduct()" style="background:#38bdf8; color:white;">Add Product</button>
 
-  <div class="bottom-buttons">
-    <button onclick="toggleMode()">Light / Dark Mode</button>
-    <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
-    <button onclick="window.location.href='login.html'" style="background:#475569; color:white;">Back to Login</button>
-  </div>
-
-  <footer>
-    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-    Unauthorized copying or resale is strictly prohibited.<br>
-    Contact: vasilis.nikitaras@gmail.com
-  </footer>
-
+  <div id="prodList"></div>
 </div>
 
+<div class="bottom-buttons" style="text-align:center; margin-top:20px;">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+  <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
+  <button onclick="window.location.href='login.html'" style="background:#ef4444; color:white;">Logout</button>
+</div>
+
+<!-- Modal -->
+<div id="vnfModal" class="vnf-modal">
+  <div class="vnf-modal-content">
+    <h3 id="vnfModalTitle">Confirm Action</h3>
+    <p id="vnfModalMessage">Are you sure?</p>
+    <button id="vnfCancelBtn" style="background:#475569; color:white;">Cancel</button>
+    <button id="vnfConfirmBtn" style="background:#ef4444; color:white;">Confirm</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="vnfToastContainer"></div>
+
 <script>
-  // Protection
+  /* Protection */
   if (localStorage.getItem("vnf_auth") !== "ok") {
     window.location.href = "login.html";
   }
 
-  // Light / Dark Mode
+  /* Mode */
   function toggleMode() {
     const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
     localStorage.setItem("vnf_mode", mode);
     document.body.className = mode;
   }
-
   document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  /* Language */
+  const lang = navigator.language || navigator.userLanguage;
+  if (lang.startsWith("el")) document.getElementById("titleMsg").innerText = "Προϊόντα";
+  if (lang.startsWith("fr")) document.getElementById("titleMsg").innerText = "Produits";
+
+  /* ROLES */
+  const vnfRole = localStorage.getItem("vnf_user");
+
+  function vnfCheckPermission(action) {
+    if (vnfRole === "staff") {
+      vnfToast("Staff cannot " + action, "#ef4444");
+      return false;
+    }
+    return true;
+  }
+
+  /* Load Stores */
+  let stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
+
+  function loadStoresIntoSelect() {
+    const sel = document.getElementById("prodStore");
+    sel.innerHTML = '<option value="">Select Store</option>';
+    stores.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.name || s;
+      opt.innerText = s.name || s;
+      sel.appendChild(opt);
+    });
+  }
+
+  loadStoresIntoSelect();
+
+  /* Products LocalStorage */
+  let products = JSON.parse(localStorage.getItem("vnf_products") || "[]");
+
+  function saveProducts() {
+    localStorage.setItem("vnf_products", JSON.stringify(products));
+  }
+
+  /* Toast */
+  function vnfToast(message, color = "#38bdf8") {
+    const box = document.getElementById("vnfToastContainer");
+
+    const toast = document.createElement("div");
+    toast.className = "vnf-toast";
+    toast.style.background = color;
+    toast.innerText = message;
+
+    box.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add("vnf-toast-hide");
+      setTimeout(() => toast.remove(), 400);
+    }, 2500);
+  }
+
+  /* Modal */
+  let vnfConfirmAction = null;
+
+  function vnfConfirm(title, message, callback) {
+    document.getElementById("vnfModalTitle").innerText = title;
+    document.getElementById("vnfModalMessage").innerText = message;
+    vnfConfirmAction = callback;
+    document.getElementById("vnfModal").style.display = "flex";
+  }
+
+  document.getElementById("vnfCancelBtn").onclick = () => {
+    document.getElementById("vnfModal").style.display = "none";
+  };
+
+  document.getElementById("vnfConfirmBtn").onclick = () => {
+    document.getElementById("vnfModal").style.display = "none";
+    if (vnfConfirmAction) vnfConfirmAction();
+  };
+
+  /* Add Product */
+  function addProduct() {
+    if (!vnfCheckPermission("add products")) return;
+
+    const name = document.getElementById("prodName").value.trim();
+    const qty = document.getElementById("prodQty").value.trim();
+    const store = document.getElementById("prodStore").value;
+
+    if (!name || !qty || !store) return alert("Enter product name, qty and store");
+
+    products.push({
+      name,
+      qty,
+      store,
+      addedBy: localStorage.getItem("vnf_user")
+    });
+
+    saveProducts();
+    renderProducts();
+    vnfToast("Product added!", "#10b981");
+  }
+
+  /* Edit Product */
+  function editProduct(index) {
+    if (!vnfCheckPermission("edit products")) return;
+
+    vnfConfirm("Edit Product", "Are you sure you want to edit this product?", () => {
+      const newName = prompt("New name:", products[index].name);
+      const newQty = prompt("New qty:", products[index].qty);
+      const newStore = prompt("New store:", products[index].store);
+
+      if (!newName || !newQty || !newStore) return;
+
+      products[index].name = newName;
+      products[index].qty = newQty;
+      products[index].store = newStore;
+
+      saveProducts();
+      renderProducts();
+      vnfToast("Product updated!", "#facc15");
+    });
+  }
+
+  /* Delete Product */
+  function deleteProduct(index) {
+    if (!vnfCheckPermission("delete products")) return;
+
+    vnfConfirm("Delete Product", "Are you sure you want to delete this product?", () => {
+      products.splice(index, 1);
+      saveProducts();
+      renderProducts();
+      vnfToast("Product deleted!", "#ef4444");
+    });
+  }
+
+  /* Render Products */
+  function renderProducts() {
+    const box = document.getElementById("prodList");
+    box.innerHTML = "";
+
+    products.forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "product-item";
+      div.innerHTML = `
+        <span>
+          ${p.name} (x${p.qty})
+          <br><small>Store: ${p.store}</small>
+          <br><small>Added by: ${p.addedBy || "unknown"}</small>
+        </span>
+        <div>
+          <button onclick="editProduct(${i})" style="background:#38bdf8; color:white;">Edit</button>
+          <button onclick="deleteProduct(${i})" style="background:#ef4444; color:white;">Delete</button>
+        </div>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  renderProducts();
+
+  /* PWA Service Worker */
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
 </script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
 
 </body>
 </html>

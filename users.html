@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
-  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <!-- Mobile Perfect Scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- PWA Requirements -->
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
 
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Users</title>
 
   <style>
-    /* Smooth transitions */
+    /* --- VNF FINAL POLISH PACK v1 --- */
+
     body, button, a {
       transition: all 0.25s ease;
     }
 
-    /* Light / Dark Mode */
     body.light { background:#f8fafc; color:#1e293b; }
     body.dark  { background:#0f172a; color:#e2e8f0; }
 
-    /* Premium header */
     .vnf-header {
       text-align:center;
       font-size:24px;
@@ -30,22 +33,18 @@
       letter-spacing:0.5px;
     }
 
-    /* Main container (PREMIUM MOBILE FIX) */
-    .vnf-container {
-      max-width:480px;
-      margin:0 auto;
-      padding:12px;
+    .content {
       text-align:center;
+      margin-top:20px;
     }
 
-    /* Buttons */
     button {
       padding:12px 18px;
       border:none;
       border-radius:10px;
-      font-weight:600;
       cursor:pointer;
-      margin:8px;
+      margin:10px;
+      font-weight:600;
       box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
@@ -54,26 +53,9 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* User box */
-    .user-box {
-      background:#ffffff;
-      padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      text-align:left;
-    }
-
-    body.dark .user-box {
-      background:#1e293b;
-      color:#e2e8f0;
-    }
-
-    /* Mobile polish */
-    @media (max-width: 480px) {
-      .vnf-header { font-size:20px; }
-      button { padding:10px 14px; }
-      body { font-size:14px; }
+    .bottom-buttons {
+      text-align:center;
+      margin-top:20px;
     }
 
     footer {
@@ -83,53 +65,30 @@
       text-align:center;
       line-height:1.4;
     }
+
+    @media (max-width:480px) {
+      .vnf-header { font-size:20px; }
+      button { padding:10px 14px; }
+      body { font-size:14px; }
+    }
   </style>
 </head>
 
 <body class="light">
 
-<div class="vnf-container">
+<div class="vnf-header">VNF Family Shop v1</div>
 
-  <div class="vnf-header">Users</div>
+<div class="content">
+  <h1>Users</h1>
+  <h2 id="langMsg"></h2>
+  <p>Users page demo.</p>
+</div>
 
-  <div id="usersList">
-
-    <!-- Example Users -->
-    <div class="user-box">
-      <strong>User #001</strong><br>
-      Name: Vasilis<br>
-      Role: Admin<br>
-      Status: Active
-    </div>
-
-    <div class="user-box">
-      <strong>User #002</strong><br>
-      Name: Maria<br>
-      Role: Manager<br>
-      Status: Active
-    </div>
-
-    <div class="user-box">
-      <strong>User #003</strong><br>
-      Name: Nikos<br>
-      Role: Viewer<br>
-      Status: Disabled
-    </div>
-
-  </div>
-
-  <div class="bottom-buttons">
-    <button onclick="toggleMode()">Light / Dark Mode</button>
-    <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
-    <button onclick="window.location.href='login.html'" style="background:#475569; color:white;">Back to Login</button>
-  </div>
-
-  <footer>
-    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-    Unauthorized copying or resale is strictly prohibited.<br>
-    Contact: vasilis.nikitaras@gmail.com
-  </footer>
-
+<div class="bottom-buttons">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+  <button onclick="logout()" style="background:#ef4444; color:white;">Logout</button>
+  <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
+  <button onclick="window.location.href='login.html'" style="background:#475569; color:white;">Back to Login</button>
 </div>
 
 <script>
@@ -146,7 +105,35 @@
   }
 
   document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let msg = "Welcome";
+
+  if (lang.startsWith("el")) msg = "Καλώς ήρθες";
+  if (lang.startsWith("fr")) msg = "Bienvenue";
+
+  window.onload = () => {
+    document.getElementById("langMsg").innerText = msg;
+  };
+
+  // Logout
+  function logout() {
+    localStorage.removeItem("vnf_auth");
+    window.location.href = "login.html";
+  }
+
+  // PWA Service Worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
 </script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
 
 </body>
 </html>

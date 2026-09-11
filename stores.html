@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
 
-  <!-- Mobile Fix: No zoom, perfect responsive -->
+  <!-- Mobile Perfect Scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- PWA Requirements -->
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
 
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Stores</title>
 
   <style>
-    /* Smooth transitions */
-    body, button, a {
-      transition: all 0.25s ease;
-    }
+    body, button, a { transition: all 0.25s ease; }
 
-    /* Light / Dark Mode */
     body.light { background:#f8fafc; color:#1e293b; }
-    body.dark  { background:#0f172a; color:#e2e8f0; }
+    body.dark { background:#0f172a; color:#e2e8f0; }
 
-    /* Premium header */
     .vnf-header {
       text-align:center;
       font-size:24px;
@@ -27,25 +26,26 @@
       margin-top:25px;
       margin-bottom:25px;
       opacity:0.9;
-      letter-spacing:0.5px;
     }
 
-    /* Main container (PREMIUM MOBILE FIX) */
-    .vnf-container {
-      max-width:480px;
-      margin:0 auto;
+    .content { text-align:center; margin-top:20px; }
+
+    input {
       padding:12px;
-      text-align:center;
+      width:260px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-top:10px;
+      font-size:16px;
     }
 
-    /* Buttons */
     button {
       padding:12px 18px;
       border:none;
-      border-radius:10px;
-      font-weight:600;
+      border-radius:10px !important;
       cursor:pointer;
-      margin:8px;
+      margin:10px;
+      font-weight:600;
       box-shadow:0 2px 6px rgba(0,0,0,0.15);
     }
 
@@ -54,26 +54,19 @@
       box-shadow:0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* Store box */
-    .store-box {
+    .store-item {
       background:#ffffff;
       padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      text-align:left;
+      margin:10px auto;
+      width:280px;
+      border-radius:12px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      text-align:center;
     }
 
-    body.dark .store-box {
+    body.dark .store-item {
       background:#1e293b;
       color:#e2e8f0;
-    }
-
-    /* Mobile polish */
-    @media (max-width: 480px) {
-      .vnf-header { font-size:20px; }
-      button { padding:10px 14px; }
-      body { font-size:14px; }
     }
 
     footer {
@@ -83,70 +76,259 @@
       text-align:center;
       line-height:1.4;
     }
+
+    /* Modal */
+    .vnf-modal {
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.55);
+      backdrop-filter:blur(3px);
+      justify-content:center;
+      align-items:center;
+      z-index:9999;
+    }
+
+    .vnf-modal-content {
+      background:white;
+      padding:25px;
+      border-radius:12px;
+      width:300px;
+      text-align:center;
+      box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    body.dark .vnf-modal-content {
+      background:#1e293b;
+      color:#e2e8f0;
+    }
+
+    /* Toast */
+    #vnfToastContainer {
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:99999;
+    }
+
+    .vnf-toast {
+      background:#1e293b;
+      color:white;
+      padding:12px 18px;
+      margin-top:10px;
+      border-radius:10px;
+      font-weight:600;
+      opacity:0;
+      transform:translateX(30px);
+      animation:vnfToastIn 0.4s forwards;
+    }
+
+    @keyframes vnfToastIn {
+      to { opacity:1; transform:translateX(0); }
+    }
+
+    .vnf-toast-hide {
+      animation:vnfToastOut 0.4s forwards;
+    }
+
+    @keyframes vnfToastOut {
+      to { opacity:0; transform:translateX(30px); }
+    }
+
+    @media (max-width:480px) {
+      .vnf-header { font-size:20px; }
+      input { width:240px; }
+      .store-item { width:260px; }
+      button { padding:10px 14px; }
+    }
   </style>
 </head>
 
 <body class="light">
 
-<div class="vnf-container">
+<div class="vnf-header">VNF Family Shop v1</div>
 
-  <div class="vnf-header">Stores</div>
+<div class="content">
+  <h1 id="titleMsg">Stores</h1>
 
-  <div id="storesList">
+  <input id="storeName" type="text" placeholder="Store name">
+  <button onclick="addStore()" style="background:#38bdf8; color:white;">Add Store</button>
 
-    <!-- Example Stores -->
-    <div class="store-box">
-      <strong>Store #001</strong><br>
-      Name: Main Market<br>
-      Location: Laval<br>
-      Status: Active
-    </div>
-
-    <div class="store-box">
-      <strong>Store #002</strong><br>
-      Name: Family Mini Shop<br>
-      Location: Montreal<br>
-      Status: Active
-    </div>
-
-    <div class="store-box">
-      <strong>Store #003</strong><br>
-      Name: Garden Fresh<br>
-      Location: Quebec City<br>
-      Status: Closed
-    </div>
-
-  </div>
-
-  <div class="bottom-buttons">
-    <button onclick="toggleMode()">Light / Dark Mode</button>
-    <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
-    <button onclick="window.location.href='login.html'" style="background:#475569; color:white;">Back to Login</button>
-  </div>
-
-  <footer>
-    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-    Unauthorized copying or resale is strictly prohibited.<br>
-    Contact: vasilis.nikitaras@gmail.com
-  </footer>
-
+  <div id="storeList"></div>
 </div>
 
+<div class="bottom-buttons" style="text-align:center; margin-top:20px;">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
+  <button onclick="window.location.href='dashboard.html'" style="background:#38bdf8; color:white;">Back to Dashboard</button>
+  <button onclick="window.location.href='login.html'" style="background:#ef4444; color:white;">Logout</button>
+</div>
+
+<!-- Modal -->
+<div id="vnfModal" class="vnf-modal">
+  <div class="vnf-modal-content">
+    <h3 id="vnfModalTitle">Confirm Action</h3>
+    <p id="vnfModalMessage">Are you sure?</p>
+    <button id="vnfCancelBtn" style="background:#475569; color:white;">Cancel</button>
+    <button id="vnfConfirmBtn" style="background:#ef4444; color:white;">Confirm</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="vnfToastContainer"></div>
+
 <script>
-  // Protection
+  /* Protection */
   if (localStorage.getItem("vnf_auth") !== "ok") {
     window.location.href = "login.html";
   }
 
-  // Light / Dark Mode
+  /* Mode */
   function toggleMode() {
     const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
     localStorage.setItem("vnf_mode", mode);
     document.body.className = mode;
   }
-
   document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+  /* Language */
+  const lang = navigator.language || navigator.userLanguage;
+  if (lang.startsWith("el")) document.getElementById("titleMsg").innerText = "Καταστήματα";
+  if (lang.startsWith("fr")) document.getElementById("titleMsg").innerText = "Magasins";
+
+  /* Toast */
+  function vnfToast(msg, color="#38bdf8") {
+    const box = document.getElementById("vnfToastContainer");
+    const t = document.createElement("div");
+    t.className = "vnf-toast";
+    t.style.background = color;
+    t.innerText = msg;
+    box.appendChild(t);
+    setTimeout(() => {
+      t.classList.add("vnf-toast-hide");
+      setTimeout(() => t.remove(), 400);
+    }, 2500);
+  }
+
+  /* Modal */
+  let vnfConfirmAction = null;
+  function vnfConfirm(title, message, callback) {
+    document.getElementById("vnfModalTitle").innerText = title;
+    document.getElementById("vnfModalMessage").innerText = message;
+    vnfConfirmAction = callback;
+    document.getElementById("vnfModal").style.display = "flex";
+  }
+  document.getElementById("vnfCancelBtn").onclick = () => {
+    document.getElementById("vnfModal").style.display = "none";
+  };
+  document.getElementById("vnfConfirmBtn").onclick = () => {
+    document.getElementById("vnfModal").style.display = "none";
+    if (vnfConfirmAction) vnfConfirmAction();
+  };
+
+  /* ROLES */
+  const vnfRole = localStorage.getItem("vnf_user");
+
+  function vnfCheckPermission(action) {
+    if (vnfRole === "staff") {
+      vnfToast("Staff cannot " + action, "#ef4444");
+      return false;
+    }
+    return true;
+  }
+
+  /* LocalStorage */
+  let stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
+
+  function saveStores() {
+    localStorage.setItem("vnf_stores", JSON.stringify(stores));
+  }
+
+  /* ADD STORE */
+  function addStore() {
+    if (!vnfCheckPermission("add stores")) return;
+
+    const name = document.getElementById("storeName").value.trim();
+    if (!name) return alert("Enter store name");
+
+    const exists = stores.some(s => (s.name || s) === name);
+    if (exists) {
+      vnfToast("Store already exists!", "#ef4444");
+      return;
+    }
+
+    stores.push({
+      name,
+      addedBy: localStorage.getItem("vnf_user")
+    });
+
+    saveStores();
+    renderStores();
+    vnfToast("Store added!", "#38bdf8");
+  }
+
+  /* EDIT STORE */
+  function editStore(i) {
+    if (!vnfCheckPermission("edit stores")) return;
+
+    vnfConfirm("Edit Store", "Are you sure?", () => {
+      const newName = prompt("New store name:", stores[i].name || stores[i]);
+      if (!newName) return;
+
+      stores[i].name = newName;
+      saveStores();
+      renderStores();
+      vnfToast("Store updated!", "#facc15");
+    });
+  }
+
+  /* DELETE STORE */
+  function deleteStore(i) {
+    if (!vnfCheckPermission("delete stores")) return;
+
+    vnfConfirm("Delete Store", "Are you sure?", () => {
+      stores.splice(i, 1);
+      saveStores();
+      renderStores();
+      vnfToast("Store deleted!", "#ef4444");
+    });
+  }
+
+  /* RENDER STORES */
+  function renderStores() {
+    const box = document.getElementById("storeList");
+    box.innerHTML = "";
+
+    stores.forEach((s, i) => {
+      const div = document.createElement("div");
+      div.className = "store-item";
+      div.innerHTML = `
+        <span>
+          ${s.name || s}
+          <br><small>Added by: ${s.addedBy || "unknown"}</small>
+        </span>
+        <div style="margin-top:10px;">
+          <button onclick="editStore(${i})" style="background:#38bdf8; color:white;">Edit</button>
+          <button onclick="deleteStore(${i})" style="background:#ef4444; color:white;">Delete</button>
+        </div>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  renderStores();
+
+  /* PWA Service Worker */
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
 </script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
 
 </body>
 </html>

@@ -2,96 +2,44 @@
 <html>
 <head>
   <meta charset="UTF-8">
-
-  <!-- Mobile Fix: No zoom, perfect responsive -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="application-name" content="VNF family-shop-v1">
   <title>Login</title>
 
   <style>
-    /* Smooth transitions */
-    body, button, a, input {
-      transition: all 0.25s ease;
-    }
+    body, button, a { transition: all 0.25s ease; }
 
-    /* Light / Dark Mode */
-    body.light { background:#f8fafc; color:#1e293b; }
-    body.dark  { background:#0f172a; color:#e2e8f0; }
+    body.light { background:#f5f5f5; color:#222; }
+    body.dark { background:#0f172a; color:white; }
 
-    /* Premium header */
     .vnf-header {
       text-align:center;
-      font-size:26px;
-      font-weight:800;
-      margin-top:25px;
-      margin-bottom:25px;
-      opacity:0.9;
-      letter-spacing:0.5px;
-    }
-
-    /* Main container (PREMIUM MOBILE FIX) */
-    .vnf-container {
-      max-width:420px;
-      margin:0 auto;
-      padding:12px;
-      text-align:center;
-    }
-
-    /* Login box */
-    .login-box {
-      background:#ffffff;
-      padding:20px;
-      border-radius:12px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+      font-size:22px;
+      font-weight:700;
       margin-top:20px;
-      text-align:center;
+      margin-bottom:20px;
+      opacity:0.85;
     }
 
-    body.dark .login-box {
-      background:#1e293b;
-      color:#e2e8f0;
-    }
+    .content { text-align:center; margin-top:20px; }
 
-    /* Inputs */
     input {
-      width:90%;
-      padding:12px;
-      margin:10px 0;
-      border-radius:10px;
-      border:1px solid #cbd5e1;
-      font-size:16px;
+      padding:10px;
+      width:200px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      margin-top:10px;
     }
 
-    body.dark input {
-      background:#0f172a;
-      color:#e2e8f0;
-      border:1px solid #334155;
-    }
-
-    /* Buttons */
     button {
-      padding:12px 18px;
+      padding:10px 16px;
       border:none;
-      border-radius:10px;
-      font-weight:600;
+      border-radius:6px;
       cursor:pointer;
-      margin:8px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      margin:10px;
     }
 
-    button:hover {
-      transform:scale(1.03);
-      box-shadow:0 4px 10px rgba(0,0,0,0.25);
-    }
-
-    /* Mobile polish */
-    @media (max-width: 480px) {
-      .vnf-header { font-size:22px; }
-      button { padding:10px 14px; }
-      input { font-size:14px; }
-      body { font-size:14px; }
-    }
+    .bottom-buttons { text-align:center; margin-top:20px; }
 
     footer {
       margin-top:30px;
@@ -102,29 +50,18 @@
     }
   </style>
 </head>
+<body>
 
-<body class="light">
+<div class="vnf-header">VNF Family Shop v1</div>
 
-<div class="vnf-container">
+<div class="content">
+  <h1 id="titleMsg">Enter Password</h1>
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()" style="background:#38bdf8; color:white;">Login</button>
+</div>
 
-  <div class="vnf-header">VNF Family Shop v1</div>
-
-  <div class="login-box">
-    <h2>Login</h2>
-
-    <input id="username" type="text" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
-
-    <button style="background:#38bdf8; color:white;" onclick="login()">Login</button>
-    <button onclick="toggleMode()">Light / Dark Mode</button>
-  </div>
-
-  <footer>
-    © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
-    Unauthorized copying or resale is strictly prohibited.<br>
-    Contact: vasilis.nikitaras@gmail.com
-  </footer>
-
+<div class="bottom-buttons">
+  <button onclick="toggleMode()" style="background:#475569; color:white;">Light / Dark Mode</button>
 </div>
 
 <script>
@@ -134,28 +71,82 @@
     localStorage.setItem("vnf_mode", mode);
     document.body.className = mode;
   }
-
   document.body.className = localStorage.getItem("vnf_mode") || "light";
 
-  // Login function
-  function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
+  // Language Detection
+  const lang = navigator.language || navigator.userLanguage;
+  let title = "Enter Password";
+  if (lang.startsWith("el")) title = "Εισαγωγή Κωδικού";
+  if (lang.startsWith("fr")) title = "Entrez le mot de passe";
 
-    if (u === "" || p === "") {
-      alert("Please enter username and password");
-      return;
+  window.onload = () => {
+    document.getElementById("titleMsg").innerText = title;
+  };
+
+  // ⭐ FANENE FAMILY SYSTEM DEMO CONFIG
+  const DEMO_FAMILY_CODE = "FNF-TEST-001";
+  const DEMO_FAMILY_ID   = "fam-001";
+  const DEMO_DEVICE_ID   = "dev-001";
+
+  // ⭐ AUTO-DEMO DATA (stores/products/orders)
+  function vnfInitDemoData() {
+    if (!localStorage.getItem("vnf_stores")) {
+      localStorage.setItem("vnf_stores", JSON.stringify([
+        { name: "Maxi", addedBy: "admin" },
+        { name: "Super C", addedBy: "family" },
+        { name: "Walmart", addedBy: "admin" }
+      ]));
     }
 
-    // Demo login
-    if (u === "admin" && p === "1234") {
-      localStorage.setItem("vnf_auth", "ok");
-      window.location.href = "dashboard.html";
-    } else {
-      alert("Invalid credentials");
+    if (!localStorage.getItem("vnf_products")) {
+      localStorage.setItem("vnf_products", JSON.stringify([
+        { name: "Milk 2L", qty: 2, store: "Maxi", addedBy: "family" },
+        { name: "Bread", qty: 1, store: "Super C", addedBy: "admin" },
+        { name: "Eggs 12", qty: 1, store: "Walmart", addedBy: "family" }
+      ]));
+    }
+
+    if (!localStorage.getItem("vnf_orders")) {
+      localStorage.setItem("vnf_orders", JSON.stringify([
+        { store: "Maxi", product: "Milk 2L", qty: 2, status: "Pending", addedBy: "admin" },
+        { store: "Super C", product: "Bread", qty: 1, status: "Completed", addedBy: "family" }
+      ]));
     }
   }
+
+  // ⭐ LOGIN WITH ROLES + FAMILY / DEVICE
+  function login() {
+    const p = document.getElementById("pass").value.trim();
+
+    let role = null;
+
+    if (p === "vnf1969") role = "admin";
+    else if (p === "family123") role = "family";
+    else if (p === "staff123") role = "staff";
+    else return alert("Wrong password");
+
+    // AUTH + ROLE
+    localStorage.setItem("vnf_auth", "ok");
+    localStorage.setItem("vnf_user", role);
+
+    // FANENE FAMILY INFO
+    localStorage.setItem("family_code", DEMO_FAMILY_CODE);
+    localStorage.setItem("family_id", DEMO_FAMILY_ID);
+    localStorage.setItem("device_id", DEMO_DEVICE_ID);
+
+    // INIT DEMO DATA
+    vnfInitDemoData();
+
+    // REDIRECT
+    window.location.href = "dashboard.html";
+  }
 </script>
+
+<footer>
+  © 2026 VNF Software — Created by Vasilis Fanes Nikitaras.<br>
+  Unauthorized copying or resale is strictly prohibited.<br>
+  Contact: vasilis.nikitaras@gmail.com
+</footer>
 
 </body>
 </html>
