@@ -16,93 +16,105 @@
   <style>
     /* --- VNF FINAL POLISH PACK v1 --- */
 
-    body, button, a { transition: all 0.25s ease; }
+body, button, a { transition: all 0.25s ease; }
 
-    body.light { background:#f8fafc; color:#1e293b; }
-    body.dark  { background:#0f172a; color:#e2e8f0; }
+body.light { background:#f8fafc; color:#1e293b; }
+body.dark  { background:#0f172a; color:#e2e8f0; }
 
- body.dark .info-box {
-  background: #1e293b;   /* πιο σκούρο, καθαρό */
-  color: #f1f5f9;        /* πιο καθαρό άσπρο */
-  border: 1px solid #334155; /* λεπτό περίγραμμα για καθαρότητα */
+/* INFO BOX FIX — LIGHT + DARK MODE */
+body.light .info-box {
+  color: #1e293b; /* καθαρό σκούρο μπλε-μαύρο για light mode */
 }
 
-    .vnf-header {
-      text-align:center;
-      font-size:24px;
-      font-weight:800;
-      margin-top:25px;
-      margin-bottom:25px;
-      opacity:0.9;
-      letter-spacing:0.5px;
-    }
+body.dark .info-box {
+  background: #1e293b;   /* premium dark background */
+  color: #f1f5f9;        /* σωστό καθαρό άσπρο */
+  border: 1px solid #334155; /* λεπτό premium περίγραμμα */
+}
 
-    .menu a {
-      display:block;
-      margin:8px 0;
-      padding:12px;
-      background:#38bdf8;
-      color:white;
-      text-decoration:none;
-      border-radius:10px;
-      text-align:center;
-      font-weight:600;
-      box-shadow:0 2px 6px rgba(0,0,0,0.15);
-    }
+/* HEADER */
+.vnf-header {
+  text-align:center;
+  font-size:24px;
+  font-weight:800;
+  margin-top:25px;
+  margin-bottom:25px;
+  opacity:0.9;
+  letter-spacing:0.5px;
+}
 
-    .menu a:hover {
-      transform:scale(1.03);
-      box-shadow:0 4px 10px rgba(0,0,0,0.25);
-    }
+/* MENU LINKS */
+.menu a {
+  display:block;
+  margin:8px 0;
+  padding:12px;
+  background:#38bdf8;
+  color:white;
+  text-decoration:none;
+  border-radius:10px;
+  text-align:center;
+  font-weight:600;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
 
-    button {
-      padding:12px 18px;
-      border:none;
-      border-radius:10px;
-      cursor:pointer;
-      margin:10px;
-      font-weight:600;
-      box-shadow:0 2px 6px rgba(0,0,0,0.15);
-    }
+.menu a:hover {
+  transform:scale(1.03);
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
 
-    button:hover {
-      transform:scale(1.03);
-      box-shadow:0 4px 10px rgba(0,0,0,0.25);
-    }
+/* BUTTONS */
+button {
+  padding:12px 18px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin:10px;
+  font-weight:600;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
 
-    .bottom-buttons {
-      text-align:center;
-      margin-top:20px;
-    }
+button:hover {
+  transform:scale(1.03);
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
 
-    /* COUNTERS */
-    #vnfCounters div {
-      padding:15px;
-      border-radius:12px;
-      margin:10px auto;
-      width:240px;
-      font-size:18px;
-      font-weight:700;
-      box-shadow:0 2px 6px rgba(0,0,0,0.15);
-    }
+/* BOTTOM BUTTONS */
+.bottom-buttons {
+  text-align:center;
+  margin-top:20px;
+}
 
-    #countStoresBox { background:#38bdf8; color:white; }
-    #countProductsBox { background:#475569; color:white; }
-    #countOrdersBox { background:#ef4444; color:white; }
+/* COUNTERS */
+#vnfCounters div {
+  padding:15px;
+  border-radius:12px;
+  margin:10px auto;
+  width:240px;
+  font-size:18px;
+  font-weight:700;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
 
-    footer {
-      margin-top:30px;
-      font-size:12px;
-      color:#777;
-      text-align:center;
-      line-height:1.4;
-    }
+#countStoresBox { background:#38bdf8; color:white; }
+#countProductsBox { background:#475569; color:white; }
+#countOrdersBox { background:#ef4444; color:white; }
 
-    @media (max-width: 480px) {
-      .vnf-header { font-size:20px; }
-      button { padding:10px 14px; }
-      #vnfCounters div { width:180px; }
-    }
+/* FOOTER */
+footer {
+  margin-top:30px;
+  font-size:12px;
+  color:#777;
+  text-align:center;
+  line-height:1.4;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .vnf-header { font-size:20px; }
+  button { padding:10px 14px; }
+  #vnfCounters div { width:180px; }
+}
+
   </style>
 </head>
 
