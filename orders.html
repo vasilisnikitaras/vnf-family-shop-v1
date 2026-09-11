@@ -194,189 +194,220 @@
 
 <script>
   /* Protection */
-  if (localStorage.getItem("vnf_auth") !== "ok") {
-    window.location.href = "login.html";
+if (localStorage.getItem("vnf_auth") !== "ok") {
+  window.location.href = "login.html";
+}
+
+/* Mode */
+function toggleMode() {
+  const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
+  localStorage.setItem("vnf_mode", mode);
+  document.body.className = mode;
+}
+document.body.className = localStorage.getItem("vnf_mode") || "light";
+
+/* Language */
+const lang = navigator.language || navigator.userLanguage;
+if (lang.startsWith("el")) document.getElementById("titleMsg").innerText = "Παραγγελίες";
+if (lang.startsWith("fr")) document.getElementById("titleMsg").innerText = "Commandes";
+
+/* ROLES */
+const vnfRole = localStorage.getItem("vnf_user");
+
+function vnfCheckPermission(action) {
+  if (vnfRole === "staff") {
+    vnfToast("Staff cannot " + action, "#ef4444");
+    return false;
   }
+  return true;
+}
 
-  /* Mode */
-  function toggleMode() {
-    const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";
-    localStorage.setItem("vnf_mode", mode);
-    document.body.className = mode;
-  }
-  document.body.className = localStorage.getItem("vnf_mode") || "light";
+/* Toast */
+function vnfToast(msg, color="#38bdf8") {
+  const box = document.getElementById("vnfToastContainer");
+  const t = document.createElement("div");
+  t.className = "vnf-toast";
+  t.style.background = color;
+  t.innerText = msg;
+  box.appendChild(t);
+  setTimeout(() => {
+    t.classList.add("vnf-toast-hide");
+    setTimeout(() => t.remove(), 400);
+  }, 2500);
+}
 
-  /* Language */
-  const lang = navigator.language || navigator.userLanguage;
-  if (lang.startsWith("el")) document.getElementById("titleMsg").innerText = "Παραγγελίες";
-  if (lang.startsWith("fr")) document.getElementById("titleMsg").innerText = "Commandes";
+/* Modal */
+let vnfConfirmAction = null;
+function vnfConfirm(title, message, callback) {
+  document.getElementById("vnfModalTitle").innerText = title;
+  document.getElementById("vnfModalMessage").innerText = message;
+  vnfConfirmAction = callback;
+  document.getElementById("vnfModal").style.display = "flex";
+}
+document.getElementById("vnfCancelBtn").onclick = () => {
+  document.getElementById("vnfModal").style.display = "none";
+};
+document.getElementById("vnfConfirmBtn").onclick = () => {
+  document.getElementById("vnfModal").style.display = "none";
+  if (vnfConfirmAction) vnfConfirmAction();
+};
 
-  /* ROLES */
-  const vnfRole = localStorage.getItem("vnf_user");
+/* Load Stores */
+let stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
+let products = JSON.parse(localStorage.getItem("vnf_products") || "[]");
+let orders = JSON.parse(localStorage.getItem("vnf_orders") || "[]");
 
-  function vnfCheckPermission(action) {
-    if (vnfRole === "staff") {
-      vnfToast("Staff cannot " + action, "#ef4444");
-      return false;
-    }
-    return true;
-  }
+function saveOrders() {
+  localStorage.setItem("vnf_orders", JSON.stringify(orders));
+}
 
-  /* Toast */
-  function vnfToast(msg, color="#38bdf8") {
-    const box = document.getElementById("vnfToastContainer");
-    const t = document.createElement("div");
-    t.className = "vnf-toast";
-    t.style.background = color;
-    t.innerText = msg;
-    box.appendChild(t);
-    setTimeout(() => {
-      t.classList.add("vnf-toast-hide");
-      setTimeout(() => t.remove(), 400);
-    }, 2500);
-  }
+function loadStores() {
+  const sel = document.getElementById("orderStore");
+  sel.innerHTML = '<option value="">Select Store</option>';
+  stores.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s.name || s;
+    opt.innerText = s.name || s;
+    sel.appendChild(opt);
+  });
+}
 
-  /* Modal */
-  let vnfConfirmAction = null;
-  function vnfConfirm(title, message, callback) {
-    document.getElementById("vnfModalTitle").innerText = title;
-    document.getElementById("vnfModalMessage").innerText = message;
-    vnfConfirmAction = callback;
-    document.getElementById("vnfModal").style.display = "flex";
-  }
-  document.getElementById("vnfCancelBtn").onclick = () => {
-    document.getElementById("vnfModal").style.display = "none";
-  };
-  document.getElementById("vnfConfirmBtn").onclick = () => {
-    document.getElementById("vnfModal").style.display = "none";
-    if (vnfConfirmAction) vnfConfirmAction();
-  };
+function loadProducts() {
+  const sel = document.getElementById("orderProduct");
+  sel.innerHTML = '<option value="">Select Product</option>';
+  products.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.name;
+    opt.innerText = p.name;
+    sel.appendChild(opt);
+  });
+}
 
-  /* Load Stores */
-  let stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
-  let products = JSON.parse(localStorage.getItem("vnf_products") || "[]");
-  let orders = JSON.parse(localStorage.getItem("vnf_orders") || "[]");
+loadStores();
+loadProducts();
 
-  function saveOrders() {
-    localStorage.setItem("vnf_orders", JSON.stringify(orders));
-  }
+/* Add Order */
+function addOrder() {
+  if (!vnfCheckPermission("add orders")) return;
 
-  function loadStores() {
-    const sel = document.getElementById("orderStore");
-    sel.innerHTML = '<option value="">Select Store</option>';
-    stores.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s.name || s;
-      opt.innerText = s.name || s;
-      sel.appendChild(opt);
-    });
-  }
+  const store = document.getElementById("orderStore").value;
+  const product = document.getElementById("orderProduct").value;
+  const qty = document.getElementById("orderQty").value;
+  const status = document.getElementById("orderStatus").value;
 
-  function loadProducts() {
-    const sel = document.getElementById("orderProduct");
-    sel.innerHTML = '<option value="">Select Product</option>';
-    products.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p.name;
-      opt.innerText = p.name;
-      sel.appendChild(opt);
-    });
-  }
+  if (!store || !product || !qty) return alert("Fill all fields");
 
-  loadStores();
-  loadProducts();
+  orders.push({
+    store,
+    product,
+    qty,
+    status,
+    addedBy: localStorage.getItem("vnf_user")
+  });
 
-  /* Add Order */
-  function addOrder() {
-    if (!vnfCheckPermission("add orders")) return;
+  saveOrders();
+  renderOrders();
+  vnfToast("Order added!", "#10b981");
+}
 
-    const store = document.getElementById("orderStore").value;
-    const product = document.getElementById("orderProduct").value;
-    const qty = document.getElementById("orderQty").value;
-    const status = document.getElementById("orderStatus").value;
+/* Edit Order */
+function editOrder(i) {
+  if (!vnfCheckPermission("edit orders")) return;
 
-    if (!store || !product || !qty) return alert("Fill all fields");
+  vnfConfirm("Edit Order", "Are you sure?", () => {
+    const newStore = prompt("Store:", orders[i].store);
+    const newProduct = prompt("Product:", orders[i].product);
+    const newQty = prompt("Qty:", orders[i].qty);
+    const newStatus = prompt("Status (Pending/Completed):", orders[i].status);
 
-    orders.push({
-      store,
-      product,
-      qty,
-      status,
-      addedBy: localStorage.getItem("vnf_user")
-    });
+    if (!newStore || !newProduct || !newQty || !newStatus) return;
+
+    orders[i].store = newStore;
+    orders[i].product = newProduct;
+    orders[i].qty = newQty;
+    orders[i].status = newStatus;
 
     saveOrders();
     renderOrders();
-    vnfToast("Order added!", "#10b981");
-  }
+    vnfToast("Order updated!", "#facc15");
+  });
+}
 
-  /* Edit Order */
-  function editOrder(i) {
-    if (!vnfCheckPermission("edit orders")) return;
+/* Delete Order */
+function deleteOrder(i) {
+  if (!vnfCheckPermission("delete orders")) return;
 
-    vnfConfirm("Edit Order", "Are you sure?", () => {
-      const newStore = prompt("Store:", orders[i].store);
-      const newProduct = prompt("Product:", orders[i].product);
-      const newQty = prompt("Qty:", orders[i].qty);
-      const newStatus = prompt("Status (Pending/Completed):", orders[i].status);
+  vnfConfirm("Delete Order", "Are you sure?", () => {
+    orders.splice(i, 1);
+    saveOrders();
+    renderOrders();
+    vnfToast("Order deleted!", "#ef4444");
+  });
+}
 
-      if (!newStore || !newProduct || !newQty || !newStatus) return;
+/* Reset Orders */
+function resetOrders() {
+  vnfConfirm("Reset Orders", "Delete ALL orders?", () => {
+    localStorage.removeItem("vnf_orders");
+    orders = [];
+    renderOrders();
+    vnfToast("All orders deleted!", "#ef4444");
+  });
+}
 
-      orders[i].store = newStore;
-      orders[i].product = newProduct;
-      orders[i].qty = newQty;
-      orders[i].status = newStatus;
+/* Reset Products */
+function resetProducts() {
+  vnfConfirm("Reset Products", "Delete ALL products?", () => {
+    localStorage.removeItem("vnf_products");
+    products = [];
+    loadProducts();
+    vnfToast("All products deleted!", "#ef4444");
+  });
+}
 
-      saveOrders();
-      renderOrders();
-      vnfToast("Order updated!", "#facc15");
-    });
-  }
+/* Reset Stores */
+function resetStores() {
+  vnfConfirm("Reset Stores", "Delete ALL stores?", () => {
+    localStorage.removeItem("vnf_stores");
+    stores = [];
+    loadStores();
+    vnfToast("All stores deleted!", "#ef4444");
+  });
+}
 
-  /* Delete Order */
-  function deleteOrder(i) {
-    if (!vnfCheckPermission("delete orders")) return;
+/* Render Orders */
+function renderOrders() {
+  const box = document.getElementById("orderList");
+  box.innerHTML = "";
 
-    vnfConfirm("Delete Order", "Are you sure?", () => {
-      orders.splice(i, 1);
-      saveOrders();
-      renderOrders();
-      vnfToast("Order deleted!", "#ef4444");
-    });
-  }
+  orders.forEach((o, i) => {
+    const div = document.createElement("div");
+    div.className = "order-item";
+    div.innerHTML = `
+      <strong>${o.product} (x${o.qty})</strong><br>
+      <small>Store: ${o.store}</small><br>
+      <small>Status: ${o.status}</small><br>
+      <small>Added by: ${o.addedBy || "unknown"}</small><br><br>
+      <button onclick="editOrder(${i})" style="background:#38bdf8; color:white;">Edit</button>
+      <button onclick="deleteOrder(${i})" style="background:#ef4444; color:white;">Delete</button>
+    `;
+    box.appendChild(div);
+  });
+}
 
-  /* Render Orders */
-  function renderOrders() {
-    const box = document.getElementById("orderList");
-    box.innerHTML = "";
+renderOrders();
 
-    orders.forEach((o, i) => {
-      const div = document.createElement("div");
-      div.className = "order-item";
-      div.innerHTML = `
-        <strong>${o.product} (x${o.qty})</strong><br>
-        <small>Store: ${o.store}</small><br>
-        <small>Status: ${o.status}</small><br>
-        <small>Added by: ${o.addedBy || "unknown"}</small><br><br>
-        <button onclick="editOrder(${i})" style="background:#38bdf8; color:white;">Edit</button>
-        <button onclick="deleteOrder(${i})" style="background:#ef4444; color:white;">Delete</button>
-      `;
-      box.appendChild(div);
-    });
-  }
+/* Logout */
+function logout() {
+  localStorage.removeItem("vnf_auth");
+  window.location.href = "login.html";
+}
 
-  renderOrders();
+/* PWA Service Worker */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
 
-  /* Logout */
-  function logout() {
-    localStorage.removeItem("vnf_auth");
-    window.location.href = "login.html";
-  }
-
-  /* PWA Service Worker */
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-  }
 </script>
 
 <footer>
