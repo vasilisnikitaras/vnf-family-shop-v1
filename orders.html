@@ -219,16 +219,19 @@ const lang = navigator.language || navigator.userLanguage;
 if (lang.startsWith("el")) document.getElementById("titleMsg").innerText = "Παραγγελίες";
 if (lang.startsWith("fr")) document.getElementById("titleMsg").innerText = "Commandes";
 
-/* ROLES */
-const vnfRole = localStorage.getItem("vnf_user");
+/* ROLES — FULL ACCESS MODE */
+let vnfRole = localStorage.getItem("vnf_user");
 
+// Μετατρέπουμε ΟΛΟΥΣ σε admin
+if (vnfRole === "family" || vnfRole === "staff") {
+  vnfRole = "admin";
+}
+
+// FULL ACCESS → δεν χρειάζεται permission check
 function vnfCheckPermission(action) {
-  if (vnfRole === "staff") {
-    vnfToast("Staff cannot " + action, "#ef4444");
-    return false;
-  }
   return true;
 }
+
 
 /* Toast */
 function vnfToast(msg, color="#38bdf8") {

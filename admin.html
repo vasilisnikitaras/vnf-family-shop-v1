@@ -108,6 +108,16 @@
   if (localStorage.getItem("vnf_auth") !== "ok") {
     window.location.href = "login.html";
   }
+    /* ROLES — FULL ACCESS MODE */
+    let vnfRole = localStorage.getItem("vnf_user");
+
+    // Μετατρέπουμε ΟΛΟΥΣ σε admin
+    if (vnfRole === "family" || vnfRole === "staff") {
+      vnfRole = "admin";
+    }
+
+    // Αποθηκεύουμε το νέο role
+    localStorage.setItem("vnf_user", vnfRole);
 
   // Light / Dark Mode
   function toggleMode() {

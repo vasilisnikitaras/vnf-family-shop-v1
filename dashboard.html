@@ -178,6 +178,23 @@ style="text-align:center; margin-top:15px; padding:12px; border-radius:10px; wid
     window.location.href = "login.html";
   }
 
+  // Protection
+if (localStorage.getItem("vnf_auth") !== "ok") {
+  window.location.href = "login.html";
+}
+
+// ⭐ FULL ACCESS MODE — admin, family, staff = full permissions
+const rawRole = localStorage.getItem("vnf_user");
+let vnfRole = rawRole;
+
+// Μετατρέπουμε ΟΛΟΥΣ σε admin
+if (rawRole === "family" || rawRole === "staff") {
+  vnfRole = "admin";
+}
+
+// Αποθηκεύουμε το νέο role
+localStorage.setItem("vnf_user", vnfRole);
+
   // Light / Dark Mode
   function toggleMode() {
     const mode = localStorage.getItem("vnf_mode") === "dark" ? "light" : "dark";

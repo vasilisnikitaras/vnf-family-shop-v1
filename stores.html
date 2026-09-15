@@ -226,16 +226,19 @@
     if (vnfConfirmAction) vnfConfirmAction();
   };
 
-  /* ROLES */
-  const vnfRole = localStorage.getItem("vnf_user");
+  //* ROLES — FULL ACCESS MODE */
+let vnfRole = localStorage.getItem("vnf_user");
 
-  function vnfCheckPermission(action) {
-    if (vnfRole === "staff") {
-      vnfToast("Staff cannot " + action, "#ef4444");
-      return false;
-    }
-    return true;
-  }
+// Μετατρέπουμε ΟΛΟΥΣ σε admin
+if (vnfRole === "family" || vnfRole === "staff") {
+  vnfRole = "admin";
+}
+
+// FULL ACCESS → δεν χρειάζεται permission check
+function vnfCheckPermission(action) {
+  return true;
+}
+
 
   /* LocalStorage */
   let stores = JSON.parse(localStorage.getItem("vnf_stores") || "[]");
